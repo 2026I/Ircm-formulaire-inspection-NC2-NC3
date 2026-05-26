@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRCM - NC2-NC3 | Formulaire d'inspection visuelle</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Segoe UI,system-ui,sans-serif;background:#f3f2f1;min-height:100vh;}
+.sp-topbar{background:#0F6CBD;padding:8px 16px;display:flex;align-items:center;gap:12px;}
+.sp-topbar span{color:#fff;font-size:13px;font-weight:600;}
+.sp-topbar .sp-site{color:#c8e6f9;font-size:12px;}
+.sp-nav{background:#fff;border-bottom:1px solid #e0e0e0;padding:0 16px;display:flex;gap:0;}
+.sp-nav-item{font-size:13px;color:#323130;padding:10px 16px;border-bottom:2px solid transparent;cursor:pointer;}
+.sp-nav-item.active{border-bottom-color:#0F6CBD;color:#0F6CBD;font-weight:500;}
+.wrap{padding:1.25rem;max-width:1400px;margin:0 auto;}
+.header-band{background:#f3f9ff;border:1px solid #cce4f7;border-radius:4px;padding:1rem 1.25rem;margin-bottom:1rem;}
+.header-band h1{font-size:15px;font-weight:600;color:#0F6CBD;margin-bottom:2px;}
+.header-band p{font-size:12px;color:#605e5c;}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;}
+.meta-grid input{width:100%;font-size:13px;padding:6px 10px;border:1px solid #8a8886;border-radius:2px;background:#fff;color:#323130;font-family:inherit;}
+.meta-label{font-size:11px;color:#605e5c;margin-bottom:3px;font-weight:500;}
+.tabs{display:flex;gap:0;margin-bottom:1rem;border-bottom:1px solid #e0e0e0;background:#fff;}
+.tab{font-size:13px;padding:10px 18px;border:none;background:transparent;color:#605e5c;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:inherit;}
+.tab.active{color:#0F6CBD;font-weight:600;border-bottom-color:#0F6CBD;}
+.tab:hover:not(.active){background:#f3f2f1;}
+.section{display:none;background:#fff;border:1px solid #e0e0e0;border-radius:2px;padding:1rem;}
+.section.active{display:block;}
+.checklist-table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;}
+.checklist-table th{text-align:left;padding:8px 10px;font-size:11px;font-weight:600;color:#323130;background:#f3f2f1;border-bottom:1px solid #c8c6c4;border-right:1px solid #e0e0e0;}
+.checklist-table td{padding:7px 8px;vertical-align:top;border-bottom:1px solid #edebe9;border-right:1px solid #edebe9;}
+.checklist-table tr:hover td{background:#f3f9ff;}
+.item-label{font-size:12px;color:#323130;line-height:1.4;}
+.item-ref{font-size:10px;color:#0F6CBD;font-weight:600;margin-bottom:3px;background:#e6f3fb;display:inline-block;padding:1px 5px;border-radius:2px;}
+.radio-group{display:flex;flex-direction:column;gap:5px;}
+.radio-group label{display:flex;align-items:center;gap:5px;font-size:11px;cursor:pointer;}
+.radio-group input[type=radio]{width:13px;height:13px;accent-color:#0F6CBD;}
+.status-C{color:#107C10;font-weight:600;}
+.status-NC{color:#A4262C;font-weight:600;}
+.status-S{color:#7A5500;font-weight:600;}
+.text-cell textarea{width:100%;font-size:11px;padding:5px 7px;border:1px solid #8a8886;border-radius:2px;background:#fff;color:#323130;resize:vertical;min-height:52px;font-family:inherit;}
+.text-cell input[type=text],.text-cell input[type=date]{width:100%;font-size:11px;padding:4px 7px;border:1px solid #8a8886;border-radius:2px;background:#fff;color:#323130;margin-bottom:4px;font-family:inherit;}
+.row-num{font-size:12px;font-weight:600;color:#605e5c;text-align:center;}
+.col-num{width:32px;}.col-item{width:25%;}.col-statut{width:82px;}.col-obs{width:18%;}.col-corr{width:19%;}.col-suivi{width:19%;}
+.ps-note{font-size:11px;color:#605e5c;background:#fff4ce;border-left:3px solid #f7c948;padding:8px 12px;margin-top:1rem;line-height:1.6;}
+.dashboard-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem;}
+.stat-card{background:#f3f2f1;border-radius:2px;padding:1.25rem;text-align:center;border:1px solid #e0e0e0;}
+.stat-card .num{font-size:28px;font-weight:700;}
+.stat-card .lbl{font-size:11px;color:#605e5c;margin-top:4px;}
+.stat-C .num{color:#107C10;}.stat-NC .num{color:#A4262C;}.stat-S .num{color:#7A5500;}
+.report-table{width:100%;border-collapse:collapse;font-size:12px;}
+.report-table th{padding:8px 10px;font-size:11px;font-weight:600;color:#323130;background:#f3f2f1;border-bottom:1px solid #c8c6c4;text-align:left;border-right:1px solid #e0e0e0;}
+.report-table td{padding:7px 10px;border-bottom:1px solid #edebe9;vertical-align:top;border-right:1px solid #edebe9;}
+.report-table tr:hover td{background:#f3f9ff;}
+.notif-section{background:#f3f2f1;border:1px solid #e0e0e0;border-radius:2px;padding:1rem 1.25rem;margin-bottom:1rem;}
+.notif-section h3{font-size:13px;font-weight:600;margin-bottom:6px;color:#323130;}
+.notif-header-row{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;margin-bottom:4px;}
+.notif-header-row span{font-size:11px;color:#605e5c;font-weight:500;}
+.notif-row{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;align-items:center;margin-bottom:6px;}
+.notif-row input{font-size:12px;padding:5px 8px;border:1px solid #8a8886;border-radius:2px;background:#fff;color:#323130;font-family:inherit;}
+.btn-remove{background:none;border:none;cursor:pointer;color:#605e5c;font-size:16px;padding:0 4px;line-height:1;}
+.btn-remove:hover{color:#A4262C;}
+.btn-add{font-size:12px;padding:6px 12px;border:1px dashed #8a8886;border-radius:2px;background:#fff;color:#323130;cursor:pointer;width:100%;margin-top:4px;font-family:inherit;}
+.btn-add:hover{background:#f3f2f1;}
+.notif-tag{font-size:10px;padding:2px 8px;border-radius:2px;background:#dff6dd;color:#107C10;display:inline-block;margin:2px;border:1px solid #92c353;}
+.save-bar{display:flex;gap:8px;align-items:center;margin-top:1rem;padding:10px 0;border-top:1px solid #e0e0e0;}
+.btn-primary{padding:7px 16px;font-size:13px;font-weight:600;border:1px solid #8a8886;border-radius:2px;background:#fff;color:#323130;cursor:pointer;font-family:inherit;}
+.btn-primary:hover{background:#f3f2f1;}
+.btn-action{padding:7px 16px;font-size:13px;font-weight:600;border:none;border-radius:2px;background:#0F6CBD;color:#fff;cursor:pointer;font-family:inherit;}
+.btn-action:hover{background:#0c5aa6;}
+.btn-notify{padding:7px 16px;font-size:13px;font-weight:600;border:none;border-radius:2px;background:#107C10;color:#fff;cursor:pointer;font-family:inherit;}
+.btn-notify:hover{background:#0b5e0b;}
+.saved-msg{font-size:12px;color:#107C10;display:none;font-weight:500;}
+</style>
+</head>
+<body>
+
+<div class="sp-topbar">
+  <span>🏢 IRCM</span>
+  <span style="color:#c8e6f9">›</span>
+  <span>IRCM - NC2-NC3</span>
+</div>
+<div class="sp-nav">
+  <div class="sp-nav-item active">Formulaire d'inspection</div>
+  <div class="sp-nav-item">Documents</div>
+  <div class="sp-nav-item">Rapports</div>
+</div>
+
+<div class="wrap">
+  <div class="header-band">
+    <h1>📋 IRCM - NC2-NC3 — Formulaire d'inspection visuelle</h1>
+    <p>NCB 5.1 – Essais de vérification et de performance · Fréquence annuelle · Version 0 · En vigueur : 2025-10-29</p>
+    <p style="font-size:12px;color:#323130;margin-top:8px;line-height:1.7;border-top:1px solid #cce4f7;padding-top:8px;">
+      <strong>NCB #5.1.1</strong> — Effectuer et documenter les essais de vérification et performance avant utilisation initiale et annuellement, ou plus souvent si : changement/réparation/modification affectant le confinement, condition du permis ASPC, condition du permis ACIA, demande ASPC/ACIA.<br>
+      Lorsque des lacunes sont identifiées, la mise en œuvre des mesures correctives doit être faite et suivie. L'inspection concerne :
+      <ul style="margin:6px 0 0 20px;list-style-type:disc;">
+        <li>Les assemblages de petits filtres de conduite</li>
+        <li>Les systèmes de décontamination</li>
+        <li>Les ESB</li>
+        <li>Les dispositifs ventilés</li>
+        <li>Les équipements (centrifugeuses et autres)</li>
+        <li>Les surfaces, les peintures (sol, plafond, paillasses, portes, mobilier, chaises, etc.), l'éclairage, les lavabos</li>
+      </ul>
+    </p>
+  </div>
+
+  <div class="meta-grid">
+    <div><div class="meta-label">Date de l'inspection</div><input type="date" id="metaDate"></div>
+    <div><div class="meta-label">Auditeur</div><input type="text" id="metaAuditeur" placeholder="Nom de l'auditeur"></div>
+    <div><div class="meta-label">Nom et n° du laboratoire</div><input type="text" id="metaLabo" placeholder="ex. Labo NC2-104"></div>
+    <div><div class="meta-label">Directeur du laboratoire</div><input type="text" id="metaDirecteur" placeholder="Nom du directeur"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('checklist',this)">✅ Inspection</button>
+    <button class="tab" onclick="switchTab('suivi',this)">🕐 Suivi correctif</button>
+    <button class="tab" onclick="switchTab('dashboard',this)">📊 Tableau de bord</button>
+    <button class="tab" onclick="switchTab('notifications',this)">🔔 Notifications</button>
+  </div>
+
+  <div id="section-checklist" class="section active">
+    <table class="checklist-table">
+      <colgroup><col class="col-num"><col class="col-item"><col class="col-statut"><col class="col-obs"><col class="col-corr"><col class="col-suivi"></colgroup>
+      <thead><tr>
+        <th><strong>#</strong></th>
+        <th><strong>Éléments à vérifier (Réf. NCB)</strong></th>
+        <th><strong>C / NC / S</strong></th>
+        <th><strong>Observations / Commentaires</strong></th>
+        <th><strong>Demande de mesures correctives</strong><br><span style="font-weight:400;font-size:10px">Faite le / Par / À</span></th>
+        <th><strong>Suivi : date de correction / commentaires</strong><br><span style="font-weight:400;font-size:10px">Département</span></th>
+      </tr></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="ps-note">
+      <strong>PS :</strong><br>
+      Point #5 : noter la date du test annuel de l'efficacité de l'autoclave dans la case Suivi.<br>
+      Point #6 : noter la date de maintenance annuelle dans la case Suivi.<br>
+      Point #7 : Ne pas faire.
+    </div>
+  </div>
+
+  <div id="section-suivi" class="section">
+    <table class="report-table">
+      <thead><tr>
+        <th><strong>#</strong></th><th><strong>Élément</strong></th><th><strong>Statut</strong></th><th><strong>Observations</strong></th>
+        <th><strong>Correction demandée le</strong></th><th><strong>Par</strong></th><th><strong>À</strong></th><th><strong>Date correction</strong></th>
+        <th><strong>Commentaires suivi</strong></th><th><strong>Département</strong></th>
+      </tr></thead>
+      <tbody id="suiviBody"></tbody>
+    </table>
+  </div>
+
+  <div id="section-dashboard" class="section">
+    <div class="dashboard-grid">
+      <div class="stat-card"><div class="num" id="d-total">0</div><div class="lbl">Éléments inspectés</div></div>
+      <div class="stat-card stat-C"><div class="num" id="d-c">0</div><div class="lbl">Conformes</div></div>
+      <div class="stat-card stat-NC"><div class="num" id="d-nc">0</div><div class="lbl">Non conformes</div></div>
+      <div class="stat-card stat-S"><div class="num" id="d-s">0</div><div class="lbl">Sous-optimaux</div></div>
+    </div>
+    <div id="d-nclist" style="font-size:12px;color:#605e5c;"></div>
+  </div>
+
+  <div id="section-notifications" class="section">
+    <div class="notif-section">
+      <h3>🔔 Personnes à notifier</h3>
+      <p style="font-size:12px;color:#605e5c;margin-bottom:12px;">Ces personnes recevront le rapport automatiquement via Power Automate lors de chaque événement (NC coché, inspection complétée, suivi ajouté).</p>
+      <div class="notif-header-row"><span>Nom</span><span>Courriel</span><span></span></div>
+      <div id="notifList"></div>
+      <button class="btn-add" onclick="addNotif()">+ Ajouter une personne</button>
+      <button class="btn-primary" onclick="saveNotif()" style="margin-top:10px;font-size:12px;">Enregistrer</button>
+      <span id="notif-saved" style="font-size:12px;color:#107C10;margin-left:8px;display:none;">✓ Sauvegardé</span>
+    </div>
+    <div class="notif-section">
+      <h3>📧 Aperçu du rapport qui sera envoyé</h3>
+      <div id="reportPreview" style="font-size:12px;color:#605e5c;line-height:1.8;"></div>
+    </div>
+  </div>
+
+  <div class="save-bar">
+    <button class="btn-action" onclick="saveAll()">💾 Sauvegarder</button>
+    <button class="btn-primary" onclick="exportTxt()">⬇ Exporter résumé</button>
+    <button class="btn-notify" onclick="sendReport()">📤 Envoyer le rapport</button>
+    <span class="saved-msg" id="savedMsg">✓ Sauvegardé avec succès</span>
+  </div>
+</div>
+
+<script>
+const ITEMS=[
+  {num:"1a",ref:"5.1.2",label:"<strong>Inspection de la zone de confinement — Éléments opérationnels :</strong> respect des procédures d'entrées et de sorties, lacunes"},
+  {num:"1b",ref:"5.1.2",label:"<strong>Éléments physiques — Surfaces intérieures :</strong> (nettoyables, non absorbantes, résistantes) : planchers fissurés ou écorchés, plafonds, murs, portes, cadres, plans de travail, mobilier, chaises, tiroirs, peintures"},
+  {num:"1c",ref:"5.1.2",label:"<strong>Mobilier, étagères, cadres, murs :</strong> matériaux durables (inox, époxy, stratifié), non absorbants, résistants aux désinfectants"},
+  {num:"1d",ref:"5.1.2",label:"<strong>Continuité des surfaces :</strong> surfaces en contact avec agents réglementés continues avec matériaux adjacents (sans interstices)"},
+  {num:"1e",ref:"5.1.2",label:"<strong>Étanchéité des jonctions :</strong> murs, planchers, plafonds, plans de travail et plinthes scellés pour éviter accumulation de liquides"},
+  {num:"1f",ref:"5.1.2",label:"<strong>Aspect des canalisations sous les éviers</strong>"},
+  {num:"1g",ref:"5.1.2",label:"<strong>Éclairage</strong>"},
+  {num:"2",ref:"5.1.5",label:"<strong>Vérification du bon fonctionnement des dispositifs de surveillance visuelle du courant d'air vers l'intérieur :</strong> indicateur visuel, manomètre de pression différentielle, jauge de vitesse de l'air, flotteur",obs:"Papier accroché sur les grilles de ventilation comme indicateur visuel."},
+  {num:"3",ref:"5.1.6",label:"<strong>Certification des ESB de catégorie II</strong> selon NSF/ANSI 49 dans des conditions d'utilisation habituelles"},
+  {num:"4",ref:"5.1.8",label:"<strong>Essais d'intégrité des dispositifs de confinement primaire autres que ESB/dispositifs ventilés — Cages et Centrifugeuses :</strong> évaluation des filtres HEPA, joints d'étanchéité, joints toriques dans les godets, rotors, autres équipements défectueux"},
+  {num:"5",ref:"5.1.4",label:"<strong>Validation de la performance des systèmes de décontamination (autoclave, effluents) :</strong> avec paramètres habituels, charges représentatives et indicateurs appropriés (biologiques, chimiques ou paramétriques)",obs:"Voir : le registre de test annuel de validation de l'efficacité de l'autoclave et le registre de tests hebdos de vérification."},
+  {num:"6",ref:"5.1.3",label:"<strong>Inspection visuelle des petits filtres de conduite</strong> selon les spécifications du fabricant : filtres destinés à la surveillance des différences de pression, évents de l'autoclave",obs:"Bâtiment NC3 : fait à la maintenance annuelle par UCleb."},
+  {num:"7",ref:"5.1.7",label:"<strong>Vérification des spécifications fabricant pour ESB/dispositifs ventilés non certifiables NSF/ANSI 49 :</strong> intégrité filtres HEPA, maintien du confinement, intégrité plénums, soudures, joints d'étanchéité, fonctionnement avertisseurs",obs:"N/A"}
+];
+
+let state={};
+
+function initState(){
+  const saved=localStorage.getItem('ircm_nc2nc3_v1');
+  if(saved){state=JSON.parse(saved);if(!state.notifList)state.notifList=[];}
+  else{
+    state={meta:{date:'',auditeur:'',labo:'',directeur:''},items:{},notifList:[]};
+    ITEMS.forEach(it=>{state.items[it.num]={statut:'',obs:it.obs||'',corrDate:'',corrPar:'',corrA:'',suiviDate:'',suiviComm:'',suiviAupres:''};});
+  }
+}
+
+function renderNotifList(){
+  const c=document.getElementById('notifList');c.innerHTML='';
+  (state.notifList||[]).forEach((p,i)=>{
+    const r=document.createElement('div');r.className='notif-row';
+    r.innerHTML=`<input type="text" placeholder="Nom" value="${p.nom||''}" oninput="state.notifList[${i}].nom=this.value">
+      <input type="email" placeholder="Courriel" value="${p.email||''}" oninput="state.notifList[${i}].email=this.value">
+      <button class="btn-remove" onclick="removeNotif(${i})">✕</button>`;
+    c.appendChild(r);
+  });
+}
+
+function addNotif(){if(!state.notifList)state.notifList=[];state.notifList.push({nom:'',email:''});renderNotifList();}
+function removeNotif(i){state.notifList.splice(i,1);renderNotifList();}
+function saveNotif(){persist();updateReportPreview();const s=document.getElementById('notif-saved');s.style.display='inline';setTimeout(()=>s.style.display='none',2000);}
+
+function renderTable(){
+  const tb=document.getElementById('tableBody');tb.innerHTML='';
+  ITEMS.forEach(it=>{
+    const s=state.items[it.num];const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="row-num">${it.num}</td>
+      <td><div class="item-ref">${it.ref}</div><div class="item-label">${it.label}</div></td>
+      <td><div class="radio-group">
+        <label><input type="radio" name="s_${it.num}" value="C" ${s.statut==='C'?'checked':''}> <span class="status-C">C</span></label>
+        <label><input type="radio" name="s_${it.num}" value="NC" ${s.statut==='NC'?'checked':''}> <span class="status-NC">NC</span></label>
+        <label><input type="radio" name="s_${it.num}" value="S" ${s.statut==='S'?'checked':''}> <span class="status-S">S</span></label>
+      </div></td>
+      <td class="text-cell"><textarea id="obs_${it.num}">${s.obs}</textarea></td>
+      <td class="text-cell"><input type="date" id="cd_${it.num}" value="${s.corrDate}"><input type="text" id="cp_${it.num}" value="${s.corrPar}" placeholder="Par (nom)"><input type="text" id="ca_${it.num}" value="${s.corrA||''}" placeholder="À (destinataire)"></td>
+      <td class="text-cell"><input type="date" id="sd_${it.num}" value="${s.suiviDate}"><input type="text" id="sc_${it.num}" value="${s.suiviComm}" placeholder="Commentaires suivi"><input type="text" id="sa_${it.num}" value="${s.suiviAupres}" placeholder="Département"></td>`;
+    tb.appendChild(tr);
+    tr.querySelectorAll('input[type=radio]').forEach(r=>r.addEventListener('change',collectAndSave));
+    ['obs_','cd_','cp_','ca_','sd_','sc_','sa_'].forEach(p=>{const el=document.getElementById(p+it.num);if(el)el.addEventListener('change',collectAndSave);});
+  });
+}
+
+function loadMeta(){
+  document.getElementById('metaDate').value=state.meta.date||'';
+  document.getElementById('metaAuditeur').value=state.meta.auditeur||'';
+  document.getElementById('metaLabo').value=state.meta.labo||'';
+  document.getElementById('metaDirecteur').value=state.meta.directeur||'';
+  ['metaDate','metaAuditeur','metaLabo','metaDirecteur'].forEach(id=>{
+    document.getElementById(id).addEventListener('change',collectAndSave);
+  });
+}
+
+function collectState(){
+  state.meta.date=document.getElementById('metaDate').value;
+  state.meta.auditeur=document.getElementById('metaAuditeur').value;
+  state.meta.labo=document.getElementById('metaLabo').value;
+  state.meta.directeur=document.getElementById('metaDirecteur').value;
+  ITEMS.forEach(it=>{
+    const r=document.querySelector(`input[name="s_${it.num}"]:checked`);
+    state.items[it.num].statut=r?r.value:'';
+    const keys=['obs','corrDate','corrPar','corrA','suiviDate','suiviComm','suiviAupres'];
+    ['obs_','cd_','cp_','ca_','sd_','sc_','sa_'].forEach((p,i)=>{const el=document.getElementById(p+it.num);if(el)state.items[it.num][keys[i]]=el.value;});
+  });
+}
+
+function collectAndSave(){collectState();persist();}
+function persist(){localStorage.setItem('ircm_nc2nc3_v1',JSON.stringify(state));}
+function saveAll(){collectState();persist();const m=document.getElementById('savedMsg');m.style.display='inline';setTimeout(()=>m.style.display='none',2500);}
+
+function switchTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('section-'+id).classList.add('active');btn.classList.add('active');
+  if(id==='suivi')renderSuivi();
+  if(id==='dashboard')renderDashboard();
+  if(id==='notifications'){renderNotifList();updateReportPreview();}
+}
+
+function renderSuivi(){
+  collectState();const tb=document.getElementById('suiviBody');tb.innerHTML='';
+  ITEMS.forEach(it=>{
+    const s=state.items[it.num];
+    const sc=s.statut==='NC'?'color:#A4262C':s.statut==='S'?'color:#7A5500':'color:#107C10';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-weight:600">${it.num}</td>
+      <td style="font-size:11px">${it.label.replace(/<[^>]+>/g,'').substring(0,60)}...</td>
+      <td style="${sc};font-weight:600">${s.statut||'—'}</td>
+      <td style="font-size:11px">${s.obs||'—'}</td>
+      <td style="font-size:11px">${s.corrDate||'—'}</td>
+      <td style="font-size:11px">${s.corrPar||'—'}</td>
+      <td style="font-size:11px">${s.corrA||'—'}</td>
+      <td style="font-size:11px">${s.suiviDate||'—'}</td>
+      <td style="font-size:11px">${s.suiviComm||'—'}</td>
+      <td style="font-size:11px">${s.suiviAupres||'—'}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+function renderDashboard(){
+  collectState();let c=0,nc=0,s=0,tot=0;const ncItems=[];
+  ITEMS.forEach(it=>{
+    const st=state.items[it.num].statut;
+    if(st){tot++;if(st==='C')c++;else if(st==='NC'){nc++;ncItems.push(it);}else if(st==='S')s++;}
+  });
+  document.getElementById('d-total').textContent=tot;
+  document.getElementById('d-c').textContent=c;
+  document.getElementById('d-nc').textContent=nc;
+  document.getElementById('d-s').textContent=s;
+  const nl=document.getElementById('d-nclist');
+  if(ncItems.length){
+    nl.innerHTML='<p style="font-weight:600;margin-bottom:6px;color:#323130">Éléments non conformes :</p>'+
+      ncItems.map(it=>`<div style="padding:4px 0;border-bottom:1px solid #edebe9"><span style="color:#A4262C;font-weight:600">#${it.num}</span> — ${it.label.replace(/<[^>]+>/g,'').substring(0,80)}...</div>`).join('');
+  } else {
+    nl.innerHTML='<p style="color:#107C10;font-weight:500">✓ Aucun élément non conforme.</p>';
+  }
+}
+
+function updateReportPreview(){
+  collectState();const m=state.meta;
+  const ncs=ITEMS.filter(it=>state.items[it.num].statut==='NC');
+  const ss=ITEMS.filter(it=>state.items[it.num].statut==='S');
+  const conf=ITEMS.filter(it=>state.items[it.num].statut==='C');
+  let html=`<strong>Laboratoire :</strong> ${m.labo||'—'} &nbsp;|&nbsp; <strong>Date :</strong> ${m.date||'—'} &nbsp;|&nbsp; <strong>Auditeur :</strong> ${m.auditeur||'—'}<br><br>`;
+  html+=`<strong>Résumé :</strong> ${conf.length} conformes, ${ncs.length} non conformes, ${ss.length} sous-optimaux.<br><br>`;
+  if(ncs.length){html+=`<strong>Non conformes :</strong><br>${ncs.map(it=>`#${it.num} — ${it.label.replace(/<[^>]+>/g,'').substring(0,60)}...`).join('<br>')}<br><br>`;}
+  if(ss.length){html+=`<strong>Sous-optimaux :</strong><br>${ss.map(it=>`#${it.num} — ${it.label.replace(/<[^>]+>/g,'').substring(0,60)}...`).join('<br>')}<br><br>`;}
+  const dest=(state.notifList||[]).filter(p=>p.email);
+  if(dest.length){html+=`<strong>Sera envoyé à :</strong> `+dest.map(p=>`<span class="notif-tag">✓ ${p.nom||p.email}</span>`).join('');}
+  else{html+=`<span style="color:#605e5c">Aucune personne configurée.</span>`;}
+  document.getElementById('reportPreview').innerHTML=html;
+}
+
+function exportTxt(){
+  collectState();const m=state.meta;
+  let txt=`IRCM - NC2-NC3\nRAPPORT D'INSPECTION VISUELLE\nNCB 5.1\n${'='.repeat(50)}\nLabo : ${m.labo}\nDate : ${m.date}\nAuditeur : ${m.auditeur}\nDirecteur : ${m.directeur}\n\n`;
+  ITEMS.forEach(it=>{
+    const s=state.items[it.num];
+    txt+=`[${it.num}] ${it.label.replace(/<[^>]+>/g,'')}\n  Statut : ${s.statut||'—'}\n  Observations : ${s.obs||'—'}\n  Correction : ${s.corrDate||'—'} par ${s.corrPar||'—'} à ${s.corrA||'—'}\n  Suivi : ${s.suiviDate||'—'} – ${s.suiviComm||'—'} – Département : ${s.suiviAupres||'—'}\n\n`;
+  });
+  const blob=new Blob([txt],{type:'text/plain'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='IRCM_NC2-NC3_inspection.txt';a.click();
+}
+
+function sendReport(){
+  collectState();const m=state.meta;
+  const ncs=ITEMS.filter(it=>state.items[it.num].statut==='NC');
+  const ss=ITEMS.filter(it=>state.items[it.num].statut==='S');
+  const conf=ITEMS.filter(it=>state.items[it.num].statut==='C');
+  let body=`Bonjour,%0D%0A%0D%0ARapport d'inspection NCB 5.1 – IRCM NC2-NC3.%0D%0A%0D%0ALaboratoire : ${m.labo}%0D%0ADate : ${m.date}%0D%0AAuditeur : ${m.auditeur}%0D%0A%0D%0ARésumé : ${conf.length} conformes, ${ncs.length} non conformes, ${ss.length} sous-optimaux.`;
+  if(ncs.length)body+=`%0D%0A%0D%0ANon conformes :%0D%0A${ncs.map(it=>`#${it.num} — ${it.label.replace(/<[^>]+>/g,'').substring(0,50)}`).join('%0D%0A')}`;
+  const to=(state.notifList||[]).filter(p=>p.email).map(p=>p.email).join(',');
+  const subj=encodeURIComponent(`IRCM NC2-NC3 – Rapport inspection – ${m.labo||''} – ${m.date||''}`);
+  window.location.href=`mailto:${to}?subject=${subj}&body=${body}`;
+}
+
+initState();
+renderTable();
+loadMeta();
+</script>
+</body>
+</html>
